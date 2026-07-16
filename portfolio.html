@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gilbert Omari — AI Systems Engineer & RAG Architect</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { inter: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    * { font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: #0ff; border-radius: 2px; }
+
+    /* ===== DIGITAL RAIN CANVAS ===== */
+    #rain-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; opacity: 0.12; }
+
+    /* ===== KEYFRAMES ===== */
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes glitch1 {
+      0%, 100% { clip-path: inset(0 0 95% 0); transform: translate(0); }
+      10% { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 2px); }
+      20% { clip-path: inset(50% 0 30% 0); transform: translate(3px, -1px); }
+      30% { clip-path: inset(0 0 85% 0); transform: translate(-2px, 1px); }
+      40% { clip-path: inset(70% 0 10% 0); transform: translate(2px, -2px); }
+      50% { clip-path: inset(10% 0 70% 0); transform: translate(0); }
+    }
+    @keyframes glitch2 {
+      0%, 100% { clip-path: inset(95% 0 0 0); transform: translate(0); }
+      15% { clip-path: inset(60% 0 20% 0); transform: translate(3px, -2px); }
+      25% { clip-path: inset(30% 0 50% 0); transform: translate(-3px, 1px); }
+      35% { clip-path: inset(80% 0 5% 0); transform: translate(2px, 2px); }
+      45% { clip-path: inset(10% 0 60% 0); transform: translate(-2px, -1px); }
+      55% { clip-path: inset(50% 0 20% 0); transform: translate(0); }
+    }
+    @keyframes scanline { 0% { top: -10%; } 100% { top: 110%; } }
+    @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.6; } 50% { transform: scale(1.2); opacity: 0; } 100% { transform: scale(0.8); opacity: 0; } }
+    @keyframes morph {
+      0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      25% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+      50% { border-radius: 50% 60% 30% 60% / 30% 60% 70% 40%; }
+      75% { border-radius: 60% 30% 60% 40% / 70% 40% 50% 60%; }
+    }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    @keyframes typing { from { width: 0; } to { width: 100%; } }
+    @keyframes blink-caret { 0%, 100% { border-color: #0ff; } 50% { border-color: transparent; } }
+    @keyframes dash-flow { to { stroke-dashoffset: -40; } }
+    @keyframes ripple { 0% { r: 2; opacity: 0.8; } 100% { r: 20; opacity: 0; } }
+    @keyframes droplet-fall { 0% { transform: translateY(-10px); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(60px); opacity: 0; } }
+    @keyframes msg-appear { 0% { transform: translateX(-20px) scale(0.8); opacity: 0; } 100% { transform: translateX(0) scale(1); opacity: 1; } }
+    @keyframes scan-doc { 0% { top: 0; } 100% { top: 100%; } }
+    @keyframes node-pulse { 0%, 100% { r: 4; } 50% { r: 7; } }
+    @keyframes point-appear { 0% { opacity: 0; r: 0; } 100% { opacity: 1; } }
+    @keyframes data-flow { 0% { stroke-dashoffset: 20; } 100% { stroke-dashoffset: 0; } }
+    @keyframes rotate-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes gradient-x { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+    .animate-fade-up { opacity: 0; animation: fadeInUp 0.8s ease-out forwards; }
+    .delay-100 { animation-delay: 0.1s; } .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; } .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; } .delay-600 { animation-delay: 0.6s; }
+
+    /* ===== GLITCH TEXT ===== */
+    .glitch { position: relative; display: inline-block; }
+    .glitch::before, .glitch::after {
+      content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    }
+    .glitch::before { color: #0ff; animation: glitch1 3s infinite linear alternate-reverse; z-index: -1; }
+    .glitch::after { color: #f0f; animation: glitch2 2.5s infinite linear alternate-reverse; z-index: -1; }
+
+    /* ===== SCANLINE OVERLAY ===== */
+    .scanline-overlay::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(to bottom, transparent, rgba(0,255,255,0.08), transparent);
+      animation: scanline 4s linear infinite; pointer-events: none; z-index: 1;
+    }
+
+    /* ===== MORPHING BLOB ===== */
+    .morph-blob {
+      width: 400px; height: 400px; background: linear-gradient(135deg, rgba(0,255,255,0.15), rgba(160,50,255,0.15));
+      animation: morph 8s ease-in-out infinite; filter: blur(60px); position: absolute;
+    }
+
+    /* ===== REVEAL ON SCROLL ===== */
+    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal.active { opacity: 1; transform: translateY(0); }
+
+    /* ===== GLASS ===== */
+    .glass { background: rgba(0,0,0,0.6); backdrop-filter: blur(20px); border: 1px solid rgba(0,255,255,0.08); }
+    .glass-card {
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(12px);
+      border: 1px solid rgba(0,255,255,0.1); transition: all 0.5s ease;
+    }
+    .glass-card:hover {
+      border-color: rgba(0,255,255,0.3); box-shadow: 0 0 30px rgba(0,255,255,0.08), inset 0 0 30px rgba(0,255,255,0.02);
+      transform: translateY(-4px);
+    }
+
+    /* ===== TEXT GRADIENT ===== */
+    .text-matrix { background: linear-gradient(90deg, #0ff, #0f0, #0ff); background-size: 200% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: gradient-x 4s ease infinite; }
+    .text-cyan-glow { color: #0ff; text-shadow: 0 0 20px rgba(0,255,255,0.4); }
+
+    /* ===== PROJECT SVG ANIMATIONS ===== */
+    .project-svg { width: 100%; height: 160px; overflow: hidden; }
+    .wave-path { stroke-dasharray: 200; stroke-dashoffset: 200; animation: dash-flow 2s linear infinite; }
+    .water-droplet { animation: droplet-fall 2s ease-in infinite; }
+    .water-droplet:nth-child(2) { animation-delay: 0.6s; }
+    .water-droplet:nth-child(3) { animation-delay: 1.2s; }
+    .ripple-circle { animation: ripple 2.5s ease-out infinite; }
+    .ripple-circle:nth-child(2) { animation-delay: 0.8s; }
+    .msg-bubble { opacity: 0; animation: msg-appear 0.5s ease-out forwards; }
+    .msg-bubble:nth-child(1) { animation-delay: 0.3s; }
+    .msg-bubble:nth-child(2) { animation-delay: 0.8s; }
+    .msg-bubble:nth-child(3) { animation-delay: 1.3s; }
+    .lidar-point { animation: point-appear 0.3s ease-out forwards; opacity: 0; }
+    .scan-line-doc { animation: scan-doc 2.5s ease-in-out infinite; }
+    .node-circle { animation: node-pulse 2s ease-in-out infinite; }
+    .data-line { stroke-dasharray: 8 4; animation: dash-flow 1.5s linear infinite; }
+    .vector-particle { animation: point-appear 0.5s ease-out forwards; opacity: 0; }
+
+    /* ===== NAV ===== */
+    .nav-link { position: relative; }
+    .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px;
+      background: #0ff; transition: width 0.3s; box-shadow: 0 0 6px #0ff; }
+    .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+
+    /* ===== TIMELINE ===== */
+    .timeline-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid #0ff;
+      background: #000; box-shadow: 0 0 12px rgba(0,255,255,0.4); position: relative; z-index: 2; }
+    .timeline-dot::after { content: ''; position: absolute; inset: -6px; border-radius: 50%;
+      border: 1px solid rgba(0,255,255,0.2); animation: pulse-ring 2s infinite; }
+    .timeline-connector { width: 2px; background: linear-gradient(to bottom, rgba(0,255,255,0.4), transparent); }
+
+    /* ===== TYPING EFFECT ===== */
+    .typing-text { font-family: 'JetBrains Mono', monospace; border-right: 2px solid #0ff;
+      animation: blink-caret 0.8s step-end infinite; white-space: nowrap; overflow: hidden;
+      display: inline-block; }
+
+    /* ===== TOAST ===== */
+    .toast { transform: translateY(100px); opacity: 0; transition: all 0.4s ease; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ===== MOBILE MENU ===== */
+    .mobile-menu { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .mobile-menu.open { max-height: 400px; }
+
+    /* ===== HEX GRID PATTERN ===== */
+    .hex-pattern {
+      background-image: radial-gradient(circle, rgba(0,255,255,0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+
+    /* ===== TAB ===== */
+    .tab-btn.active { color: #0ff; border-color: rgba(0,255,255,0.3); background: rgba(0,255,255,0.05); box-shadow: 0 0 15px rgba(0,255,255,0.1); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+  </style>
+</head>
+<body class="bg-black text-white font-inter overflow-x-hidden">
+
+  <!-- Digital Rain Canvas -->
+  <canvas id="rain-canvas"></canvas>
+
+  <!-- Navigation -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500 py-4 px-6">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <a href="#hero" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-lg border border-cyan-500/30 flex items-center justify-center relative overflow-hidden group-hover:border-cyan-400 transition-all">
+          <span class="text-cyan-400 font-mono font-bold text-sm relative z-10">GO</span>
+          <div class="absolute inset-0 bg-cyan-500/10 group-hover:bg-cyan-500/20 transition-all"></div>
+        </div>
+        <span class="font-mono text-cyan-400 text-sm hidden sm:inline tracking-wider">gilbert::omari</span>
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#about" class="nav-link text-xs font-mono uppercase tracking-widest text-slate-500 hover:text-cyan-400 transition-colors">About</a>
+        <a href="#skills" class="nav-link text-xs font-mono uppercase tracking-widest text-slate-500 hover:text-cyan-400 transition-colors">Skills</a>
+        <a href="#projects" class="nav-link text-xs font-mono uppercase tracking-widest text-slate-500 hover:text-cyan-400 transition-colors">Projects</a>
+        <a href="#experience" class="nav-link text-xs font-mono uppercase tracking-widest text-slate-500 hover:text-cyan-400 transition-colors">Experience</a>
+        <a href="#contact" class="nav-link text-xs font-mono uppercase tracking-widest text-slate-500 hover:text-cyan-400 transition-colors">Contact</a>
+      </div>
+      <div class="hidden md:flex items-center gap-3">
+        <a href="https://linkedin.com/in/gilbert-omari-0923a630a" target="_blank" class="p-2 text-slate-600 hover:text-cyan-400 transition-colors">
+          <span class="iconify" data-icon="lucide:linkedin" data-width="16"></span>
+        </a>
+        <a href="mailto:gilbertnyangwachi@gmail.com" class="px-5 py-2 text-xs font-mono uppercase tracking-wider rounded border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 hover:border-cyan-400 hover:shadow-[0_0_20px_rgba(0,255,255,0.15)] transition-all">
+          Initialize Contact
+        </a>
+      </div>
+      <button id="mobile-toggle" class="md:hidden p-2 text-slate-500 hover:text-cyan-400 transition-colors">
+        <span class="iconify" data-icon="lucide:menu" data-width="22" id="menu-icon"></span>
+      </button>
+    </div>
+    <div id="mobile-menu" class="mobile-menu md:hidden">
+      <div class="pt-4 pb-2 flex flex-col gap-1">
+        <a href="#about" class="mobile-nav-link px-4 py-2 text-xs font-mono uppercase tracking-widest text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/5 rounded transition-all">About</a>
+        <a href="#skills" class="mobile-nav-link px-4 py-2 text-xs font-mono uppercase tracking-widest text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/5 rounded transition-all">Skills</a>
+        <a href="#projects" class="mobile-nav-link px-4 py-2 text-xs font-mono uppercase tracking-widest text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/5 rounded transition-all">Projects</a>
+        <a href="#experience" class="mobile-nav-link px-4 py-2 text-xs font-mono uppercase tracking-widest text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/5 rounded transition-all">Experience</a>
+        <a href="#contact" class="mobile-nav-link px-4 py-2 text-xs font-mono uppercase tracking-widest text-slate-500 hover:text-cyan-400 hover:bg-cyan-500/5 rounded transition-all">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ====== HERO ====== -->
+  <section id="hero" class="relative min-h-screen flex items-center overflow-hidden scanline-overlay">
+    <!-- Morphing blobs -->
+    <div class="morph-blob -top-20 -right-40 opacity-40"></div>
+    <div class="morph-blob bottom-0 -left-40 opacity-30" style="animation-delay: -4s; width: 350px; height: 350px; background: linear-gradient(135deg, rgba(160,50,255,0.15), rgba(0,255,255,0.1));"></div>
+
+    <div class="max-w-7xl mx-auto px-6 w-full pt-24 pb-16 relative z-10">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="animate-fade-up">
+            <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded border border-cyan-500/20 bg-cyan-500/5 mb-8">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
+              <span class="text-[10px] font-mono text-cyan-400 uppercase tracking-widest">System Online — Nairobi, Kenya</span>
+            </div>
+          </div>
+
+          <h1 class="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight leading-[1.05] animate-fade-up delay-100">
+            <span class="text-white">AI Systems</span><br>
+            <span class="glitch text-matrix" data-text="Engineer">Engineer</span><br>
+            <span class="text-white">& RAG </span><span class="text-matrix">Architect</span>
+          </h1>
+
+          <div class="mt-6 animate-fade-up delay-200">
+            <p class="text-sm font-mono text-cyan-400/60 mb-2">$ whoami</p>
+            <p class="text-slate-400 font-light leading-relaxed max-w-lg">
+              Specializing in high-trust agentic systems and autonomous workflow orchestration. Transforming unstructured domain-specific data into reliable, compliant outputs with Python, n8n, and Vector Databases.
+            </p>
+          </div>
+
+          <div class="flex flex-wrap gap-4 mt-8 animate-fade-up delay-300">
+            <a href="#projects" class="group px-6 py-3 text-xs font-mono uppercase tracking-wider rounded border border-cyan-500/40 text-cyan-400 hover:bg-cyan-500 hover:text-black hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(0,255,255,0.3)] transition-all flex items-center gap-2">
+              <span class="iconify" data-icon="lucide:terminal" data-width="14"></span>
+              View Projects
+              <span class="iconify group-hover:translate-x-1 transition-transform" data-icon="lucide:arrow-right" data-width="12"></span>
+            </a>
+            <a href="#contact" class="px-6 py-3 text-xs font-mono uppercase tracking-wider rounded border border-white/10 text-slate-400 hover:border-white/20 hover:text-white transition-all flex items-center gap-2">
+              <span class="iconify" data-icon="lucide:radio" data-width="14"></span>
+              Transmit Signal
+            </a>
+          </div>
+
+          <!-- Terminal snippet -->
+          <div class="mt-10 animate-fade-up delay-400">
+            <div class="glass rounded-lg p-4 max-w-md">
+              <div class="flex items-center gap-1.5 mb-3">
+                <div class="w-2 h-2 rounded-full bg-red-500/60"></div>
+                <div class="w-2 h-2 rounded-full bg-yellow-500/60"></div>
+                <div class="w-2 h-2 rounded-full bg-green-500/60"></div>
+                <span class="text-[9px] font-mono text-slate-600 ml-2">bash — 80×24</span>
+              </div>
+              <div class="font-mono text-[11px] leading-5 text-slate-500">
+                <div><span class="text-cyan-400">➜</span> <span class="text-green-400">~/gilbert</span> python -c "import sys; print(sys.version)"</div>
+                <div class="text-slate-400">3.12.x [GCC 11.4.0]</div>
+                <div class="mt-1"><span class="text-cyan-400">➜</span> <span class="text-green-400">~/gilbert</span> n8n start --tunnel</div>
+                <div class="text-slate-400">Editor is now accessible via: http://localhost:5678/</div>
+                <div class="mt-1 flex items-center"><span class="text-cyan-400">➜</span> <span class="text-green-400">~/gilbert</span> <span class="typing-text text-cyan-400">building the future_</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Animated Visual -->
+        <div class="relative animate-fade-up delay-300 hidden lg:flex items-center justify-center">
+          <div class="relative w-[420px] h-[420px]">
+            <!-- Rotating ring -->
+            <div class="absolute inset-0 border border-cyan-500/10 rounded-full" style="animation: rotate-slow 20s linear infinite;"></div>
+            <div class="absolute inset-6 border border-purple-500/10 rounded-full" style="animation: rotate-slow 15s linear infinite reverse;"></div>
+            <div class="absolute inset-12 border border-cyan-500/5 rounded-full" style="animation: rotate-slow 25s linear infinite;"></div>
+
+            <!-- Center orb -->
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-32 h-32 morph-blob opacity-60" style="width: 128px; height: 128px; filter: blur(20px);"></div>
+            </div>
+
+            <!-- Floating nodes -->
+            <div class="absolute top-8 left-1/2 -translate-x-1/2 glass rounded-lg px-3 py-1.5 animate-float" style="animation-duration: 4s;">
+              <span class="text-[10px] font-mono text-cyan-400">LangChain</span>
+            </div>
+            <div class="absolute top-1/3 right-4 glass rounded-lg px-3 py-1.5 animate-float" style="animation-duration: 5s; animation-delay: 1s;">
+              <span class="text-[10px] font-mono text-purple-400">Qdrant</span>
+            </div>
+            <div class="absolute bottom-1/3 right-8 glass rounded-lg px-3 py-1.5 animate-float" style="animation-duration: 4.5s; animation-delay: 0.5s;">
+              <span class="text-[10px] font-mono text-green-400">n8n</span>
+            </div>
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 glass rounded-lg px-3 py-1.5 animate-float" style="animation-duration: 5.5s; animation-delay: 1.5s;">
+              <span class="text-[10px] font-mono text-yellow-400">Claude</span>
+            </div>
+            <div class="absolute top-1/3 left-4 glass rounded-lg px-3 py-1.5 animate-float" style="animation-duration: 4.8s; animation-delay: 2s;">
+              <span class="text-[10px] font-mono text-pink-400">RAG</span>
+            </div>
+            <div class="absolute bottom-1/3 left-8 glass rounded-lg px-3 py-1.5 animate-float" style="animation-duration: 5.2s; animation-delay: 0.8s;">
+              <span class="text-[10px] font-mono text-orange-400">Django</span>
+            </div>
+
+            <!-- Connecting lines SVG -->
+            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 420 420" fill="none">
+              <line x1="210" y1="50" x2="330" y2="140" stroke="rgba(0,255,255,0.08)" stroke-width="1" class="data-line"/>
+              <line x1="330" y1="140" x2="370" y2="280" stroke="rgba(160,50,255,0.08)" stroke-width="1" class="data-line"/>
+              <line x1="210" y1="370" x2="100" y2="280" stroke="rgba(0,255,100,0.08)" stroke-width="1" class="data-line"/>
+              <line x1="100" y1="140" x2="210" y2="50" stroke="rgba(255,200,0,0.08)" stroke-width="1" class="data-line"/>
+              <line x1="210" y1="210" x2="210" y2="50" stroke="rgba(0,255,255,0.06)" stroke-width="1" class="data-line"/>
+              <line x1="210" y1="210" x2="100" y2="280" stroke="rgba(0,255,255,0.06)" stroke-width="1" class="data-line"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce z-10">
+      <span class="iconify text-cyan-500/40" data-icon="lucide:chevrons-down" data-width="20"></span>
+    </div>
+  </section>
+
+  <!-- ====== ABOUT ====== -->
+  <section id="about" class="py-24 relative hex-pattern">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="reveal relative">
+          <div class="relative w-full max-w-md mx-auto">
+            <!-- Morphing frame -->
+            <div class="absolute -inset-4 morph-blob opacity-20" style="width: calc(100% + 32px); height: calc(100% + 32px);"></div>
+            <img src="https://picsum.photos/seed/gilbert-ai-engineer-nairobi/500/600.jpg" alt="Gilbert Omari" class="rounded-2xl object-cover w-full aspect-[4/5] relative z-10 border border-cyan-500/10">
+            <div class="absolute inset-0 rounded-2xl bg-gradient-to-t from-black via-transparent to-transparent z-20"></div>
+
+            <!-- Data overlay on image -->
+            <div class="absolute bottom-6 left-6 right-6 z-30 glass rounded-xl p-4 border border-cyan-500/10">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                  <span class="iconify text-cyan-400" data-icon="lucide:cpu" data-width="18"></span>
+                </div>
+                <div>
+                  <div class="text-xs font-mono text-cyan-400">root@gilbert:~$</div>
+                  <div class="text-[10px] text-slate-500 font-mono">analytical_chemistry → ai_systems_engineer</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded border border-cyan-500/20 bg-cyan-500/5 text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-4">
+            <span class="iconify" data-icon="lucide:fingerprint" data-width="12"></span>
+            Identity
+          </div>
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight">
+            <span class="text-white">Precision from</span> <span class="text-matrix">chemistry</span><span class="text-white">, power from</span> <span class="text-matrix">code</span>
+          </h2>
+          <p class="mt-5 text-slate-400 font-light leading-relaxed">
+            I leverage an analytical chemistry foundation to ensure data precision, model alignment, and streamlined enterprise-scale automation. From LiDAR annotation for autonomous systems to architecting RAG pipelines that eliminate hallucinations — I build high-trust AI systems that deliver reliable outputs.
+          </p>
+          <p class="mt-4 text-slate-400 font-light leading-relaxed">
+            Currently working with RefugePoint's programmes to help them articulate their work through MEL frameworks — using AI to ethically evaluate narrative and EOD reports from the deployment team, answering key questions and triangulating how the theory of change comes into play, especially in complementary pathways.
+          </p>
+
+          <div class="grid grid-cols-2 gap-3 mt-8">
+            <div class="glass-card rounded-xl p-4 group">
+              <span class="iconify text-cyan-400 group-hover:scale-110 transition-transform" data-icon="lucide:map-pin" data-width="16"></span>
+              <div class="text-xs font-medium text-white mt-2">Location</div>
+              <div class="text-[10px] text-slate-500 font-mono">Nairobi, KE</div>
+            </div>
+            <div class="glass-card rounded-xl p-4 group">
+              <span class="iconify text-purple-400 group-hover:scale-110 transition-transform" data-icon="lucide:graduation-cap" data-width="16"></span>
+              <div class="text-xs font-medium text-white mt-2">Foundation</div>
+              <div class="text-[10px] text-slate-500 font-mono">BSc Chem + Full-Stack</div>
+            </div>
+            <div class="glass-card rounded-xl p-4 group">
+              <span class="iconify text-green-400 group-hover:scale-110 transition-transform" data-icon="lucide:shield-check" data-width="16"></span>
+              <div class="text-xs font-medium text-white mt-2">Certified</div>
+              <div class="text-[10px] text-slate-500 font-mono">Claude 101 + AI Fluency</div>
+            </div>
+            <div class="glass-card rounded-xl p-4 group">
+              <span class="iconify text-yellow-400 group-hover:scale-110 transition-transform" data-icon="lucide:languages" data-width="16"></span>
+              <div class="text-xs font-medium text-white mt-2">Languages</div>
+              <div class="text-[10px] text-slate-500 font-mono">EN · SW · FR + 3 more</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SKILLS ====== -->
+  <section id="skills" class="py-24 relative">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center reveal">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded border border-purple-500/20 bg-purple-500/5 text-[10px] font-mono text-purple-400 uppercase tracking-widest mb-4">
+          <span class="iconify" data-icon="lucide:scan" data-width="12"></span>
+          Capability Matrix
+        </div>
+        <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-white">
+          Scanning <span class="text-matrix">skill tree</span>
+        </h2>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex justify-center mt-10 reveal">
+        <div class="glass rounded-lg p-1 inline-flex gap-1">
+          <button class="tab-btn active px-4 py-2 text-[10px] font-mono uppercase tracking-wider rounded border border-transparent transition-all" data-tab="arch">
+            <span class="iconify inline-block mr-1 align-middle" data-icon="lucide:brain" data-width="12"></span>Architecture
+          </button>
+          <button class="tab-btn px-4 py-2 text-[10px] font-mono uppercase tracking-wider text-slate-500 rounded border border-transparent transition-all" data-tab="eng">
+            <span class="iconify inline-block mr-1 align-middle" data-icon="lucide:code-2" data-width="12"></span>Engineering
+          </button>
+          <button class="tab-btn px-4 py-2 text-[10px] font-mono uppercase tracking-wider text-slate-500 rounded border border-transparent transition-all" data-tab="create">
+            <span class="iconify inline-block mr-1 align-middle" data-icon="lucide:palette" data-width="12"></span>Creative
+          </button>
+        </div>
+      </div>
+
+      <!-- Architecture Tab -->
+      <div id="tab-arch" class="tab-content active mt-10">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="glass-card rounded-2xl p-6 reveal">
+            <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4">
+              <span class="iconify text-cyan-400" data-icon="lucide:database" data-width="18"></span>
+            </div>
+            <h3 class="text-sm font-semibold text-white">RAG Architecture</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light leading-relaxed">Domain-specific knowledge bases synced with Qdrant Vector Database to mitigate model hallucinations.</p>
+            <div class="flex flex-wrap gap-1 mt-3">
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/10">Qdrant</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/10">AirTable</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/10">RAG</span>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl p-6 reveal">
+            <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
+              <span class="iconify text-purple-400" data-icon="lucide:bot" data-width="18"></span>
+            </div>
+            <h3 class="text-sm font-semibold text-white">Agentic Workflows</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light leading-relaxed">Autonomous SMS agents, multi-agent orchestration, and compliant outreach pipelines.</p>
+            <div class="flex flex-wrap gap-1 mt-3">
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-purple-500/10 text-purple-400 border border-purple-500/10">LangChain</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-purple-500/10 text-purple-400 border border-purple-500/10">LangGraph</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-purple-500/10 text-purple-400 border border-purple-500/10">Google ADK</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-purple-500/10 text-purple-400 border border-purple-500/10">MCP</span>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl p-6 reveal">
+            <div class="w-10 h-10 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-4">
+              <span class="iconify text-green-400" data-icon="lucide:workflow" data-width="18"></span>
+            </div>
+            <h3 class="text-sm font-semibold text-white">Workflow Orchestration</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light leading-relaxed">Autonomous data pipelines replacing manual operations for enterprise-scale workflows.</p>
+            <div class="flex flex-wrap gap-1 mt-3">
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-green-500/10 text-green-400 border border-green-500/10">n8n</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-green-500/10 text-green-400 border border-green-500/10">Python</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-green-500/10 text-green-400 border border-green-500/10">Claude API</span>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl p-6 reveal">
+            <div class="w-10 h-10 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center mb-4">
+              <span class="iconify text-yellow-400" data-icon="lucide:target" data-width="18"></span>
+            </div>
+            <h3 class="text-sm font-semibold text-white">Model Evaluation & Alignment</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light leading-relaxed">"Ground Truth" testing via scenario mapping and iterative feedback loops for reliable AI outputs.</p>
+            <div class="flex flex-wrap gap-1 mt-3">
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/10">Ground Truth</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/10">Scenario Mapping</span>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl p-6 reveal">
+            <div class="w-10 h-10 rounded-lg bg-pink-500/10 border border-pink-500/20 flex items-center justify-center mb-4">
+              <span class="iconify text-pink-400" data-icon="lucide:smartphone" data-width="18"></span>
+            </div>
+            <h3 class="text-sm font-semibold text-white">SMS Agent Infrastructure</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light leading-relaxed">Autonomous SMS agents with A2P 10DLC verification and high-deliverability compliance.</p>
+            <div class="flex flex-wrap gap-1 mt-3">
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-pink-500/10 text-pink-400 border border-pink-500/10">GoHighLevel</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-pink-500/10 text-pink-400 border border-pink-500/10">Twilio</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-pink-500/10 text-pink-400 border border-pink-500/10">A2P 10DLC</span>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl p-6 reveal">
+            <div class="w-10 h-10 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-4">
+              <span class="iconify text-indigo-400" data-icon="lucide:shield" data-width="18"></span>
+            </div>
+            <h3 class="text-sm font-semibold text-white">Ethical AI & MEL</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light leading-relaxed">AI-assisted evaluation of humanitarian programme data within MEL methodology — ethical, structured, triangulated.</p>
+            <div class="flex flex-wrap gap-1 mt-3">
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/10">MEL</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/10">Theory of Change</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/10">Ethical AI</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Engineering Tab -->
+      <div id="tab-eng" class="tab-content mt-10">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="glass-card rounded-2xl p-6 reveal">
+            <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4">
+              <span class="iconify text-cyan-400" data-icon="lucide:terminal" data-width="18"></span>
+            </div>
+            <h3 class="text-sm font-semibold text-white">Python & Full-Stack</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light">Django, Flask, React.js, Next.js architecture for production systems.</p>
+            <div class="flex flex-wrap gap-1 mt-3">
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/10">Django</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/10">Flask</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/10">React</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/10">Next.js</span>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl p-6 reveal">
+            <div class="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-4">
+              <span class="iconify text-purple-400" data-icon="lucide:plug" data-width="18"></span>
+            </div>
+            <h3 class="text-sm font-semibold text-white">API & Systems Integration</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light">Complex deployments for OpenAI, Anthropic, Twilio A2P 10DLC, M-Pesa Daraja, Africa's Talking.</p>
+            <div class="flex flex-wrap gap-1 mt-3">
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-purple-500/10 text-purple-400 border border-purple-500/10">OpenAI</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-purple-500/10 text-purple-400 border border-purple-500/10">Anthropic</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-purple-500/10 text-purple-400 border border-purple-500/10">M-Pesa</span>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl p-6 reveal">
+            <div class="w-10 h-10 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-4">
+              <span class="iconify text-green-400" data-icon="lucide:box" data-width="18"></span>
+            </div>
+            <h3 class="text-sm font-semibold text-white">3D LiDAR & Sensor Fusion</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light">High-fidelity 3D annotation and data labeling for autonomous ML environments.</p>
+            <div class="flex flex-wrap gap-1 mt-3">
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-green-500/10 text-green-400 border border-green-500/10">LiDAR</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-green-500/10 text-green-400 border border-green-500/10">Sensor Fusion</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-green-500/10 text-green-400 border border-green-500/10">3D Annotation</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Creative Tab -->
+      <div id="tab-create" class="tab-content mt-10">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="glass-card rounded-2xl p-6 reveal">
+            <div class="w-10 h-10 rounded-lg bg-pink-500/10 border border-pink-500/20 flex items-center justify-center mb-4">
+              <span class="iconify text-pink-400" data-icon="lucide:video" data-width="18"></span>
+            </div>
+            <h3 class="text-sm font-semibold text-white">Video & Podcast</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light">Short-form for TikTok/YouTube, monthly podcast production, DaVinci Resolve + Opus Clip.</p>
+            <div class="flex flex-wrap gap-1 mt-3">
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-pink-500/10 text-pink-400 border border-pink-500/10">DaVinci</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-pink-500/10 text-pink-400 border border-pink-500/10">Opus Clip</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-pink-500/10 text-pink-400 border border-pink-500/10">Premiere</span>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl p-6 reveal">
+            <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center mb-4">
+              <span class="iconify text-cyan-400" data-icon="lucide:wand-2" data-width="18"></span>
+            </div>
+            <h3 class="text-sm font-semibold text-white">AI Creative</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light">AI-first creative workflows — Canva AI, Figma AI, ChatGPT for accelerated production.</p>
+            <div class="flex flex-wrap gap-1 mt-3">
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/10">Canva AI</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/10">Figma AI</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/10">ChatGPT</span>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl p-6 reveal">
+            <div class="w-10 h-10 rounded-lg bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center mb-4">
+              <span class="iconify text-yellow-400" data-icon="lucide:pen-tool" data-width="18"></span>
+            </div>
+            <h3 class="text-sm font-semibold text-white">Design & Brand</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light">9-part LinkedIn carousel series, social graphics, thumbnails, and visual hierarchy.</p>
+            <div class="flex flex-wrap gap-1 mt-3">
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/10">Photoshop</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/10">Illustrator</span>
+              <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-yellow-500/10 text-yellow-400 border border-yellow-500/10">After Effects</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== PROJECTS WITH ANIMATED ILLUSTRATIONS ====== -->
+  <section id="projects" class="py-24 relative hex-pattern">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center reveal">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded border border-cyan-500/20 bg-cyan-500/5 text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-4">
+          <span class="iconify" data-icon="lucide:layers" data-width="12"></span>
+          Deployed Systems
+        </div>
+        <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-white">
+          Rendered <span class="text-matrix">artifacts</span>
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
+
+        <!-- PROJECT 1: Water Billing — Water Animation -->
+        <div class="glass-card rounded-2xl overflow-hidden reveal group">
+          <div class="h-48 relative bg-gradient-to-b from-cyan-950/30 to-black overflow-hidden">
+            <svg viewBox="0 0 400 200" class="absolute inset-0 w-full h-full">
+              <!-- Waves -->
+              <path d="M0,120 Q50,90 100,120 T200,120 T300,120 T400,120 L400,200 L0,200 Z" fill="rgba(0,255,255,0.04)" class="wave-path" style="stroke-dasharray:0;"/>
+              <path d="M0,120 Q50,90 100,120 T200,120 T300,120 T400,120" fill="none" stroke="rgba(0,255,255,0.3)" stroke-width="1.5" class="wave-path"/>
+              <path d="M0,140 Q50,115 100,140 T200,140 T300,140 T400,140" fill="none" stroke="rgba(0,255,255,0.2)" stroke-width="1" class="wave-path" style="animation-delay: -0.5s;"/>
+              <path d="M0,160 Q50,140 100,160 T200,160 T300,160 T400,160" fill="none" stroke="rgba(0,255,255,0.1)" stroke-width="0.8" class="wave-path" style="animation-delay: -1s;"/>
+              <!-- Water droplets -->
+              <g class="water-droplet">
+                <path d="M120,30 Q123,20 126,30 Q123,38 120,30 Z" fill="rgba(0,255,255,0.6)"/>
+              </g>
+              <g class="water-droplet" style="animation-delay: 0.7s;">
+                <path d="M200,20 Q203,10 206,20 Q203,28 200,20 Z" fill="rgba(0,255,255,0.5)"/>
+              </g>
+              <g class="water-droplet" style="animation-delay: 1.4s;">
+                <path d="M280,25 Q283,15 286,25 Q283,33 280,25 Z" fill="rgba(0,255,255,0.4)"/>
+              </g>
+              <!-- Ripples -->
+              <circle cx="150" cy="120" fill="none" stroke="rgba(0,255,255,0.2)" stroke-width="0.5" class="ripple-circle"/>
+              <circle cx="250" cy="135" fill="none" stroke="rgba(0,255,255,0.15)" stroke-width="0.5" class="ripple-circle" style="animation-delay: 1s;"/>
+              <!-- M-Pesa icon hint -->
+              <rect x="310" y="60" width="50" height="30" rx="4" fill="none" stroke="rgba(0,255,100,0.3)" stroke-width="0.8"/>
+              <text x="322" y="79" font-size="8" font-family="monospace" fill="rgba(0,255,100,0.5)">M-PESA</text>
+              <!-- Ledger lines -->
+              <line x1="40" y1="55" x2="90" y2="55" stroke="rgba(0,255,255,0.15)" stroke-width="0.5"/>
+              <line x1="40" y1="65" x2="80" y2="65" stroke="rgba(0,255,255,0.1)" stroke-width="0.5"/>
+              <line x1="40" y1="75" x2="85" y2="75" stroke="rgba(0,255,255,0.1)" stroke-width="0.5"/>
+            </svg>
+            <div class="absolute top-3 left-3">
+              <span class="px-2 py-0.5 text-[8px] font-mono rounded bg-cyan-500/15 text-cyan-400 border border-cyan-500/20">DJANGO</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="text-sm font-semibold text-white group-hover:text-cyan-400 transition-colors">Water Utility Billing System</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light leading-relaxed">Full billing application with running ledger model, tiered SMS reminders via Africa's Talking, and M-Pesa Daraja API payments. Designed for solo long-term maintenance.</p>
+            <div class="flex items-center gap-2 mt-3 text-[9px] font-mono text-slate-600">
+              <span class="iconify" data-icon="lucide:droplets" data-width="10"></span>
+              Django • PostgreSQL • Africa's Talking • M-Pesa
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT 2: RAG Pipeline — Vector/Particle Animation -->
+        <div class="glass-card rounded-2xl overflow-hidden reveal group">
+          <div class="h-48 relative bg-gradient-to-b from-purple-950/20 to-black overflow-hidden">
+            <svg viewBox="0 0 400 200" class="absolute inset-0 w-full h-full">
+              <!-- Database shape -->
+              <ellipse cx="200" cy="60" rx="45" ry="15" fill="none" stroke="rgba(160,50,255,0.3)" stroke-width="1"/>
+              <ellipse cx="200" cy="75" rx="45" ry="15" fill="none" stroke="rgba(160,50,255,0.2)" stroke-width="0.8"/>
+              <ellipse cx="200" cy="90" rx="45" ry="15" fill="none" stroke="rgba(160,50,255,0.15)" stroke-width="0.6"/>
+              <line x1="155" y1="60" x2="155" y2="90" stroke="rgba(160,50,255,0.2)" stroke-width="0.8"/>
+              <line x1="245" y1="60" x2="245" y2="90" stroke="rgba(160,50,255,0.2)" stroke-width="0.8"/>
+              <text x="175" y="80" font-size="7" font-family="monospace" fill="rgba(160,50,255,0.5)">QDRANT</text>
+              <!-- Vector particles flowing in -->
+              <circle cx="80" cy="50" r="2" fill="rgba(0,255,255,0.6)" class="vector-particle" style="animation-delay:0s;"/>
+              <circle cx="60" cy="90" r="1.5" fill="rgba(0,255,255,0.5)" class="vector-particle" style="animation-delay:0.3s;"/>
+              <circle cx="90" cy="130" r="2" fill="rgba(0,255,255,0.4)" class="vector-particle" style="animation-delay:0.6s;"/>
+              <circle cx="320" cy="45" r="1.5" fill="rgba(0,255,255,0.5)" class="vector-particle" style="animation-delay:0.2s;"/>
+              <circle cx="340" cy="100" r="2" fill="rgba(0,255,255,0.4)" class="vector-particle" style="animation-delay:0.5s;"/>
+              <circle cx="310" cy="140" r="1.5" fill="rgba(0,255,255,0.3)" class="vector-particle" style="animation-delay:0.8s;"/>
+              <!-- Flow lines to database -->
+              <line x1="82" y1="52" x2="155" y2="68" stroke="rgba(0,255,255,0.15)" stroke-width="0.5" class="data-line"/>
+              <line x1="62" y1="92" x2="155" y2="78" stroke="rgba(0,255,255,0.1)" stroke-width="0.5" class="data-line"/>
+              <line x1="318" y1="47" x2="245" y2="68" stroke="rgba(0,255,255,0.15)" stroke-width="0.5" class="data-line"/>
+              <line x1="338" y1="102" x2="245" y2="80" stroke="rgba(0,255,255,0.1)" stroke-width="0.5" class="data-line"/>
+              <!-- AirTable source -->
+              <rect x="50" y="150" width="60" height="25" rx="3" fill="none" stroke="rgba(0,255,100,0.3)" stroke-width="0.8"/>
+              <text x="58" y="166" font-size="7" font-family="monospace" fill="rgba(0,255,100,0.4)">AirTable</text>
+              <line x1="110" y1="162" x2="155" y2="85" stroke="rgba(0,255,100,0.1)" stroke-width="0.5" class="data-line"/>
+              <!-- Output: reliable response -->
+              <rect x="290" y="155" width="70" height="25" rx="3" fill="none" stroke="rgba(0,255,255,0.3)" stroke-width="0.8"/>
+              <text x="297" y="170" font-size="6" font-family="monospace" fill="rgba(0,255,255,0.4)">✓ Verified</text>
+              <line x1="245" y1="85" x2="290" y2="162" stroke="rgba(0,255,255,0.1)" stroke-width="0.5" class="data-line"/>
+            </svg>
+            <div class="absolute top-3 left-3">
+              <span class="px-2 py-0.5 text-[8px] font-mono rounded bg-purple-500/15 text-purple-400 border border-purple-500/20">RAG</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="text-sm font-semibold text-white group-hover:text-purple-400 transition-colors">Qdrant RAG Knowledge Base</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light leading-relaxed">Domain-specific knowledge base synced from AirTable to Qdrant Vector DB, mitigating model hallucinations for reliable internal queries.</p>
+            <div class="flex items-center gap-2 mt-3 text-[9px] font-mono text-slate-600">
+              <span class="iconify" data-icon="lucide:database" data-width="10"></span>
+              Qdrant • AirTable • Python • n8n
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT 3: SMS Agents — Message Animation -->
+        <div class="glass-card rounded-2xl overflow-hidden reveal group">
+          <div class="h-48 relative bg-gradient-to-b from-green-950/20 to-black overflow-hidden">
+            <svg viewBox="0 0 400 200" class="absolute inset-0 w-full h-full">
+              <!-- Phone outline -->
+              <rect x="150" y="20" width="100" height="165" rx="12" fill="none" stroke="rgba(0,255,100,0.2)" stroke-width="1"/>
+              <rect x="158" y="35" width="84" height="130" rx="2" fill="rgba(0,255,100,0.02)"/>
+              <circle cx="200" cy="172" r="6" fill="none" stroke="rgba(0,255,100,0.2)" stroke-width="0.5"/>
+              <!-- Message bubbles appearing -->
+              <g class="msg-bubble">
+                <rect x="165" y="45" width="65" height="20" rx="6" fill="rgba(0,255,100,0.1)" stroke="rgba(0,255,100,0.2)" stroke-width="0.5"/>
+                <text x="172" y="58" font-size="6" font-family="monospace" fill="rgba(0,255,100,0.5)">Hello! 🤖</text>
+              </g>
+              <g class="msg-bubble">
+                <rect x="170" y="72" width="68" height="20" rx="6" fill="rgba(0,255,100,0.08)" stroke="rgba(0,255,100,0.15)" stroke-width="0.5"/>
+                <text x="177" y="85" font-size="6" font-family="monospace" fill="rgba(0,255,100,0.4)">Response...</text>
+              </g>
+              <g class="msg-bubble">
+                <rect x="165" y="99" width="72" height="20" rx="6" fill="rgba(0,255,100,0.06)" stroke="rgba(0,255,100,0.1)" stroke-width="0.5"/>
+                <text x="172" y="112" font-size="6" font-family="monospace" fill="rgba(0,255,100,0.35)">✓ Delivered</text>
+              </g>
+              <!-- Signal waves from phone -->
+              <path d="M260,60 Q275,50 270,35" fill="none" stroke="rgba(0,255,100,0.15)" stroke-width="0.8" class="wave-path"/>
+              <path d="M265,65 Q285,50 278,30" fill="none" stroke="rgba(0,255,100,0.1)" stroke-width="0.6" class="wave-path" style="animation-delay: -0.5s;"/>
+              <!-- GHL label -->
+              <text x="270" y="75" font-size="6" font-family="monospace" fill="rgba(0,255,100,0.3)">GHL</text>
+              <!-- Twilio label -->
+              <text x="270" y="90" font-size="6" font-family="monospace" fill="rgba(0,200,255,0.3)">Twilio</text>
+              <!-- A2P badge -->
+              <rect x="270" y="100" width="55" height="14" rx="3" fill="none" stroke="rgba(255,200,0,0.2)" stroke-width="0.5"/>
+              <text x="276" y="110" font-size="5" font-family="monospace" fill="rgba(255,200,0,0.4)">A2P 10DLC</text>
+            </svg>
+            <div class="absolute top-3 left-3">
+              <span class="px-2 py-0.5 text-[8px] font-mono rounded bg-green-500/15 text-green-400 border border-green-500/20">SMS</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="text-sm font-semibold text-white group-hover:text-green-400 transition-colors">Autonomous SMS Agents</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light leading-relaxed">Architected SMS agents using GoHighLevel and Twilio, overseeing A2P 10DLC verification and compliance for high-deliverability outreach pipelines.</p>
+            <div class="flex items-center gap-2 mt-3 text-[9px] font-mono text-slate-600">
+              <span class="iconify" data-icon="lucide:message-square" data-width="10"></span>
+              GoHighLevel • Twilio • A2P 10DLC
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT 4: LiDAR — Point Cloud Animation -->
+        <div class="glass-card rounded-2xl overflow-hidden reveal group">
+          <div class="h-48 relative bg-gradient-to-b from-emerald-950/20 to-black overflow-hidden">
+            <svg viewBox="0 0 400 200" class="absolute inset-0 w-full h-full" id="lidar-svg">
+              <!-- 3D box wireframe -->
+              <polygon points="120,140 200,100 280,140 200,180" fill="none" stroke="rgba(0,255,200,0.1)" stroke-width="0.5"/>
+              <polygon points="120,140 200,100 200,50 120,90" fill="none" stroke="rgba(0,255,200,0.08)" stroke-width="0.5"/>
+              <polygon points="200,100 280,140 280,90 200,50" fill="none" stroke="rgba(0,255,200,0.1)" stroke-width="0.5"/>
+              <!-- LiDAR points on surfaces -->
+              <circle cx="150" cy="125" r="1.5" fill="rgba(0,255,200,0.7)" class="lidar-point" style="animation-delay:0.1s;"/>
+              <circle cx="165" cy="118" r="1" fill="rgba(0,255,200,0.6)" class="lidar-point" style="animation-delay:0.2s;"/>
+              <circle cx="180" cy="112" r="1.5" fill="rgba(0,255,200,0.5)" class="lidar-point" style="animation-delay:0.3s;"/>
+              <circle cx="210" cy="108" r="1" fill="rgba(0,255,200,0.6)" class="lidar-point" style="animation-delay:0.4s;"/>
+              <circle cx="240" cy="120" r="1.5" fill="rgba(0,255,200,0.5)" class="lidar-point" style="animation-delay:0.5s;"/>
+              <circle cx="260" cy="130" r="1" fill="rgba(0,255,200,0.4)" class="lidar-point" style="animation-delay:0.6s;"/>
+              <circle cx="155" cy="105" r="1.5" fill="rgba(0,255,200,0.5)" class="lidar-point" style="animation-delay:0.7s;"/>
+              <circle cx="175" cy="90" r="1" fill="rgba(0,255,200,0.4)" class="lidar-point" style="animation-delay:0.8s;"/>
+              <circle cx="220" cy="85" r="1.5" fill="rgba(0,255,200,0.5)" class="lidar-point" style="animation-delay:0.9s;"/>
+              <circle cx="250" cy="100" r="1" fill="rgba(0,255,200,0.4)" class="lidar-point" style="animation-delay:1.0s;"/>
+              <circle cx="190" cy="75" r="1.5" fill="rgba(0,255,200,0.6)" class="lidar-point" style="animation-delay:1.1s;"/>
+              <circle cx="230" cy="70" r="1" fill="rgba(0,255,200,0.5)" class="lidar-point" style="animation-delay:1.2s;"/>
+              <circle cx="140" cy="135" r="1" fill="rgba(0,255,200,0.3)" class="lidar-point" style="animation-delay:1.3s;"/>
+              <circle cx="270" cy="135" r="1" fill="rgba(0,255,200,0.3)" class="lidar-point" style="animation-delay:1.4s;"/>
+              <circle cx="200" cy="60" r="1.5" fill="rgba(0,255,200,0.7)" class="lidar-point" style="animation-delay:1.5s;"/>
+              <!-- Scanning beam -->
+              <line x1="200" y1="195" x2="150" y2="125" stroke="rgba(0,255,200,0.08)" stroke-width="0.5" class="data-line"/>
+              <line x1="200" y1="195" x2="250" y2="120" stroke="rgba(0,255,200,0.08)" stroke-width="0.5" class="data-line" style="animation-delay:-0.5s;"/>
+              <line x1="200" y1="195" x2="200" y2="60" stroke="rgba(0,255,200,0.06)" stroke-width="0.5" class="data-line" style="animation-delay:-1s;"/>
+              <!-- Label -->
+              <text x="300" y="180" font-size="6" font-family="monospace" fill="rgba(0,255,200,0.3)">3D ANNOTATION</text>
+              <text x="300" y="192" font-size="5" font-family="monospace" fill="rgba(0,255,200,0.2)">SENSOR FUSION</text>
+            </svg>
+            <div class="absolute top-3 left-3">
+              <span class="px-2 py-0.5 text-[8px] font-mono rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">LiDAR</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="text-sm font-semibold text-white group-hover:text-emerald-400 transition-colors">3D LiDAR Annotation Pipeline</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light leading-relaxed">Orchestrated high-fidelity 3D LiDAR annotation and sensor-fusion data labeling to generate training sets for autonomous ML environments.</p>
+            <div class="flex items-center gap-2 mt-3 text-[9px] font-mono text-slate-600">
+              <span class="iconify" data-icon="lucide:scan-line" data-width="10"></span>
+              LiDAR • Sensor Fusion • Data Validation • QA
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT 5: MEL Evaluation — Document Scan Animation -->
+        <div class="glass-card rounded-2xl overflow-hidden reveal group">
+          <div class="h-48 relative bg-gradient-to-b from-indigo-950/20 to-black overflow-hidden">
+            <svg viewBox="0 0 400 200" class="absolute inset-0 w-full h-full">
+              <!-- Document shape -->
+              <rect x="80" y="25" width="120" height="155" rx="3" fill="rgba(100,100,255,0.03)" stroke="rgba(100,100,255,0.15)" stroke-width="0.8"/>
+              <!-- Text lines on document -->
+              <line x1="95" y1="45" x2="185" y2="45" stroke="rgba(100,100,255,0.12)" stroke-width="0.8"/>
+              <line x1="95" y1="55" x2="175" y2="55" stroke="rgba(100,100,255,0.08)" stroke-width="0.5"/>
+              <line x1="95" y1="65" x2="180" y2="65" stroke="rgba(100,100,255,0.08)" stroke-width="0.5"/>
+              <line x1="95" y1="75" x2="170" y2="75" stroke="rgba(100,100,255,0.08)" stroke-width="0.5"/>
+              <line x1="95" y1="90" x2="185" y2="90" stroke="rgba(100,100,255,0.12)" stroke-width="0.8"/>
+              <line x1="95" y1="100" x2="178" y2="100" stroke="rgba(100,100,255,0.08)" stroke-width="0.5"/>
+              <line x1="95" y1="110" x2="182" y2="110" stroke="rgba(100,100,255,0.08)" stroke-width="0.5"/>
+              <line x1="95" y1="120" x2="165" y2="120" stroke="rgba(100,100,255,0.08)" stroke-width="0.5"/>
+              <line x1="95" y1="135" x2="185" y2="135" stroke="rgba(100,100,255,0.12)" stroke-width="0.8"/>
+              <line x1="95" y1="145" x2="175" y2="145" stroke="rgba(100,100,255,0.08)" stroke-width="0.5"/>
+              <line x1="95" y1="155" x2="180" y2="155" stroke="rgba(100,100,255,0.08)" stroke-width="0.5"/>
+              <!-- Scan line -->
+              <rect x="80" y="25" width="120" height="4" rx="1" fill="rgba(0,255,255,0.15)" class="scan-line-doc"/>
+              <!-- Highlighted themes -->
+              <rect x="93" y="42" width="50" height="6" rx="1" fill="rgba(0,255,255,0.08)"/>
+              <rect x="93" y="87" width="60" height="6" rx="1" fill="rgba(0,255,255,0.08)"/>
+              <rect x="93" y="132" width="45" height="6" rx="1" fill="rgba(0,255,255,0.08)"/>
+              <!-- Arrow to analysis -->
+              <line x1="200" y1="80" x2="240" y2="80" stroke="rgba(0,255,255,0.2)" stroke-width="0.8" class="data-line"/>
+              <polygon points="240,77 248,80 240,83" fill="rgba(0,255,255,0.3)"/>
+              <!-- Analysis panel -->
+              <rect x="250" y="30" width="120" height="140" rx="4" fill="rgba(0,255,255,0.02)" stroke="rgba(0,255,255,0.12)" stroke-width="0.8"/>
+              <text x="265" y="50" font-size="6" font-family="monospace" fill="rgba(0,255,255,0.4)">THEMES</text>
+              <text x="265" y="68" font-size="5" font-family="monospace" fill="rgba(0,255,255,0.3)">◆ Complement. Pathways</text>
+              <text x="265" y="82" font-size="5" font-family="monospace" fill="rgba(0,255,255,0.25)">◆ Theory of Change</text>
+              <text x="265" y="96" font-size="5" font-family="monospace" fill="rgba(0,255,255,0.2)">◆ Deployment Narrative</text>
+              <line x1="265" y1="108" x2="355" y2="108" stroke="rgba(0,255,255,0.08)" stroke-width="0.3"/>
+              <text x="265" y="122" font-size="6" font-family="monospace" fill="rgba(0,255,255,0.4)">TRIANGULATION</text>
+              <text x="265" y="138" font-size="5" font-family="monospace" fill="rgba(0,255,255,0.25)">◆ EOD Reports</text>
+              <text x="265" y="152" font-size="5" font-family="monospace" fill="rgba(0,255,255,0.2)">◆ Key Questions</text>
+              <!-- Ethical shield -->
+              <circle cx="310" cy="168" r="8" fill="none" stroke="rgba(100,255,100,0.2)" stroke-width="0.5"/>
+              <text x="304" y="171" font-size="7" fill="rgba(100,255,100,0.3)">✓</text>
+              <text x="322" y="171" font-size="4" font-family="monospace" fill="rgba(100,255,100,0.2)">ETHICAL</text>
+            </svg>
+            <div class="absolute top-3 left-3">
+              <span class="px-2 py-0.5 text-[8px] font-mono rounded bg-indigo-500/15 text-indigo-400 border border-indigo-500/20">MEL</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="text-sm font-semibold text-white group-hover:text-indigo-400 transition-colors">RefugePoint MEL AI Evaluation</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light leading-relaxed">Working with programmes across RefugePoint to articulate their work as MEL — AI ethically evaluates deployment team narrative and EOD reports, triangulating how the theory of change plays out in complementary pathways.</p>
+            <div class="flex items-center gap-2 mt-3 text-[9px] font-mono text-slate-600">
+              <span class="iconify" data-icon="lucide:file-search" data-width="10"></span>
+              n8n • Claude • MEL • Theory of Change • Complementary Pathways
+            </div>
+          </div>
+        </div>
+
+        <!-- PROJECT 6: n8n Workflows — Node Network Animation -->
+        <div class="glass-card rounded-2xl overflow-hidden reveal group">
+          <div class="h-48 relative bg-gradient-to-b from-amber-950/15 to-black overflow-hidden">
+            <svg viewBox="0 0 400 200" class="absolute inset-0 w-full h-full">
+              <!-- Workflow nodes -->
+              <circle cx="80" cy="60" r="14" fill="rgba(255,200,0,0.05)" stroke="rgba(255,200,0,0.3)" stroke-width="0.8" class="node-circle"/>
+              <text x="74" y="63" font-size="6" font-family="monospace" fill="rgba(255,200,0,0.5)">n8n</text>
+
+              <circle cx="200" cy="40" r="14" fill="rgba(0,255,255,0.05)" stroke="rgba(0,255,255,0.3)" stroke-width="0.8" class="node-circle" style="animation-delay:0.3s;"/>
+              <text x="193" y="43" font-size="5" font-family="monospace" fill="rgba(0,255,255,0.5)">API</text>
+
+              <circle cx="320" cy="60" r="14" fill="rgba(160,50,255,0.05)" stroke="rgba(160,50,255,0.3)" stroke-width="0.8" class="node-circle" style="animation-delay:0.6s;"/>
+              <text x="313" y="63" font-size="5" font-family="monospace" fill="rgba(160,50,255,0.5)">DB</text>
+
+              <circle cx="140" cy="140" r="14" fill="rgba(0,255,100,0.05)" stroke="rgba(0,255,100,0.3)" stroke-width="0.8" class="node-circle" style="animation-delay:0.9s;"/>
+              <text x="131" y="143" font-size="5" font-family="monospace" fill="rgba(0,255,100,0.5)">PY</text>
+
+              <circle cx="260" cy="140" r="14" fill="rgba(255,100,100,0.05)" stroke="rgba(255,100,100,0.3)" stroke-width="0.8" class="node-circle" style="animation-delay:1.2s;"/>
+              <text x="252" y="143" font-size="5" font-family="monospace" fill="rgba(255,100,100,0.5)">GHL</text>
+
+              <!-- Connection lines with data flow -->
+              <line x1="94" y1="60" x2="186" y2="42" stroke="rgba(255,200,0,0.15)" stroke-width="1" class="data-line"/>
+              <line x1="214" y1="42" x2="306" y2="58" stroke="rgba(0,255,255,0.15)" stroke-width="1" class="data-line"/>
+              <line x1="80" y1="74" x2="133" y2="128" stroke="rgba(255,200,0,0.1)" stroke-width="1" class="data-line" style="animation-delay:-0.5s;"/>
+              <line x1="153" y1="140" x2="246" y2="140" stroke="rgba(0,255,100,0.15)" stroke-width="1" class="data-line"/>
+              <line x1="200" y1="54" x2="260" y2="128" stroke="rgba(0,255,255,0.1)" stroke-width="0.8" class="data-line" style="animation-delay:-1s;"/>
+              <line x1="320" y1="74" x2="274" y2="128" stroke="rgba(160,50,255,0.1)" stroke-width="0.8" class="data-line" style="animation-delay:-0.3s;"/>
+              <!-- Ground Truth label -->
+              <rect x="130" y="170" width="90" height="16" rx="3" fill="none" stroke="rgba(255,200,0,0.2)" stroke-width="0.5"/>
+              <text x="137" y="181" font-size="5" font-family="monospace" fill="rgba(255,200,0,0.4)">GROUND TRUTH ✓</text>
+            </svg>
+            <div class="absolute top-3 left-3">
+              <span class="px-2 py-0.5 text-[8px] font-mono rounded bg-yellow-500/15 text-yellow-400 border border-yellow-500/20">ORCHESTRATION</span>
+            </div>
+          </div>
+          <div class="p-5">
+            <h3 class="text-sm font-semibold text-white group-hover:text-yellow-400 transition-colors">Autonomous Data Pipelines</h3>
+            <p class="text-xs text-slate-500 mt-2 font-light leading-relaxed">Orchestrated autonomous data pipelines using n8n and Python to replace manual operations, with Ground Truth testing for model alignment.</p>
+            <div class="flex items-center gap-2 mt-3 text-[9px] font-mono text-slate-600">
+              <span class="iconify" data-icon="lucide:workflow" data-width="10"></span>
+              n8n • Python • Ground Truth • Scenario Mapping
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== EXPERIENCE ====== -->
+  <section id="experience" class="py-24 relative">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid lg:grid-cols-5 gap-16">
+        <!-- Left Column -->
+        <div class="lg:col-span-2 reveal">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded border border-cyan-500/20 bg-cyan-500/5 text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-4">
+            <span class="iconify" data-icon="lucide:activity" data-width="12"></span>
+            Runtime Log
+          </div>
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight text-white">
+            Execution <span class="text-matrix">timeline</span>
+          </h2>
+          <p class="mt-4 text-slate-500 font-light leading-relaxed text-sm">
+            From autonomous systems data to enterprise AI architecture — each role compounds the last.
+          </p>
+
+          <!-- Certifications -->
+          <div class="mt-10">
+            <h3 class="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-3">// Certifications</h3>
+            <div class="space-y-2">
+              <div class="glass-card rounded-lg p-3 flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+                  <span class="iconify text-orange-400" data-icon="lucide:award" data-width="14"></span>
+                </div>
+                <div>
+                  <div class="text-xs font-medium text-white">Claude 101</div>
+                  <div class="text-[10px] text-slate-600 font-mono">Anthropic</div>
+                </div>
+              </div>
+              <div class="glass-card rounded-lg p-3 flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                  <span class="iconify text-cyan-400" data-icon="lucide:sparkles" data-width="14"></span>
+                </div>
+                <div>
+                  <div class="text-xs font-medium text-white">AI Fluency</div>
+                  <div class="text-[10px] text-slate-600 font-mono">Anthropic</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Education -->
+          <div class="mt-8">
+            <h3 class="text-[10px] font-mono text-slate-600 uppercase tracking-widest mb-3">// Education</h3>
+            <div class="space-y-2">
+              <div class="glass-card rounded-lg p-3 flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                  <span class="iconify text-purple-400" data-icon="lucide:flask-conical" data-width="14"></span>
+                </div>
+                <div>
+                  <div class="text-xs font-medium text-white">BSc Analytical Chemistry</div>
+                  <div class="text-[10px] text-slate-600 font-mono">JKUAT • 3.60</div>
+                </div>
+              </div>
+              <div class="glass-card rounded-lg p-3 flex items-center gap-3">
+                <div class="w-8 h-8 rounded bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                  <span class="iconify text-green-400" data-icon="lucide:code-2" data-width="14"></span>
+                </div>
+                <div>
+                  <div class="text-xs font-medium text-white">Full-Stack Software Development</div>
+                  <div class="text-[10px] text-slate-600 font-mono">Emobilis • 3.70</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Timeline -->
+        <div class="lg:col-span-3 reveal">
+          <div class="space-y-0">
+            <!-- Role 1 -->
+            <div class="flex gap-6">
+              <div class="flex flex-col items-center">
+                <div class="timeline-dot"></div>
+                <div class="timeline-connector flex-1 min-h-[180px]"></div>
+              </div>
+              <div class="glass-card rounded-2xl p-6 flex-1 mb-6">
+                <div class="flex items-start justify-between gap-4 flex-wrap">
+                  <div>
+                    <h3 class="text-sm font-semibold text-white">AI Solution Architect</h3>
+                    <div class="text-xs text-cyan-400 font-mono mt-1">ManyMangoes</div>
+                  </div>
+                  <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/15">06/2025 – Present</span>
+                </div>
+                <ul class="mt-4 space-y-2">
+                  <li class="flex items-start gap-2 text-xs text-slate-500 font-light">
+                    <span class="iconify text-cyan-500 mt-0.5 flex-shrink-0" data-icon="lucide:check" data-width="12"></span>
+                    Engineered RAG architecture: AirTable → Qdrant Vector DB for hallucination-free queries
+                  </li>
+                  <li class="flex items-start gap-2 text-xs text-slate-500 font-light">
+                    <span class="iconify text-cyan-500 mt-0.5 flex-shrink-0" data-icon="lucide:check" data-width="12"></span>
+                    Architected autonomous SMS agents with GoHighLevel + Twilio A2P 10DLC compliance
+                  </li>
+                  <li class="flex items-start gap-2 text-xs text-slate-500 font-light">
+                    <span class="iconify text-cyan-500 mt-0.5 flex-shrink-0" data-icon="lucide:check" data-width="12"></span>
+                    Orchestrated n8n + Python pipelines replacing manual enterprise data operations
+                  </li>
+                  <li class="flex items-start gap-2 text-xs text-slate-500 font-light">
+                    <span class="iconify text-cyan-500 mt-0.5 flex-shrink-0" data-icon="lucide:check" data-width="12"></span>
+                    Developed Ground Truth testing framework via scenario mapping and feedback loops
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Role 2 -->
+            <div class="flex gap-6">
+              <div class="flex flex-col items-center">
+                <div class="timeline-dot" style="border-color: #a855f7; box-shadow: 0 0 12px rgba(168,85,247,0.4);"></div>
+                <div class="timeline-connector flex-1 min-h-[140px]" style="background: linear-gradient(to bottom, rgba(168,85,247,0.3), transparent);"></div>
+              </div>
+              <div class="glass-card rounded-2xl p-6 flex-1 mb-6">
+                <div class="flex items-start justify-between gap-4 flex-wrap">
+                  <div>
+                    <h3 class="text-sm font-semibold text-white">AI Evaluation Intern — MEL Department</h3>
+                    <div class="text-xs text-purple-400 font-mono mt-1">RefugePoint</div>
+                  </div>
+                  <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-purple-500/10 text-purple-400 border border-purple-500/15">2025 – Present</span>
+                </div>
+                <ul class="mt-4 space-y-2">
+                  <li class="flex items-start gap-2 text-xs text-slate-500 font-light">
+                    <span class="iconify text-purple-500 mt-0.5 flex-shrink-0" data-icon="lucide:check" data-width="12"></span>
+                    Working with programmes across RefugePoint to help them articulate their work as MEL
+                  </li>
+                  <li class="flex items-start gap-2 text-xs text-slate-500 font-light">
+                    <span class="iconify text-purple-500 mt-0.5 flex-shrink-0" data-icon="lucide:check" data-width="12"></span>
+                    AI-assisted evaluation of deployment team narrative and EOD reports
+                  </li>
+                  <li class="flex items-start gap-2 text-xs text-slate-500 font-light">
+                    <span class="iconify text-purple-500 mt-0.5 flex-shrink-0" data-icon="lucide:check" data-width="12"></span>
+                    Triangulating how theory of change comes into play, especially in complementary pathways
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Role 3 -->
+            <div class="flex gap-6">
+              <div class="flex flex-col items-center">
+                <div class="timeline-dot" style="border-color: #22c55e; box-shadow: 0 0 12px rgba(34,197,94,0.4);"></div>
+              </div>
+              <div class="glass-card rounded-2xl p-6 flex-1">
+                <div class="flex items-start justify-between gap-4 flex-wrap">
+                  <div>
+                    <h3 class="text-sm font-semibold text-white">AI Solutions & Data Specialist</h3>
+                    <div class="text-xs text-green-400 font-mono mt-1">Freelancing</div>
+                  </div>
+                  <span class="px-2 py-0.5 text-[9px] font-mono rounded bg-green-500/10 text-green-400 border border-green-500/15">04/2023 – Present</span>
+                </div>
+                <ul class="mt-4 space-y-2">
+                  <li class="flex items-start gap-2 text-xs text-slate-500 font-light">
+                    <span class="iconify text-green-500 mt-0.5 flex-shrink-0" data-icon="lucide:check" data-width="12"></span>
+                    Orchestrated 3D LiDAR annotation and sensor-fusion data labeling for autonomous ML
+                  </li>
+                  <li class="flex items-start gap-2 text-xs text-slate-500 font-light">
+                    <span class="iconify text-green-500 mt-0.5 flex-shrink-0" data-icon="lucide:check" data-width="12"></span>
+                    Performed data validation and QA to minimize bias in complex spatial AI applications
+                  </li>
+                  <li class="flex items-start gap-2 text-xs text-slate-500 font-light">
+                    <span class="iconify text-green-500 mt-0.5 flex-shrink-0" data-icon="lucide:check" data-width="12"></span>
+                    Built water utility billing system (Django, M-Pesa Daraja, Africa's Talking SMS)
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== CONTACT ====== -->
+  <section id="contact" class="py-24 relative hex-pattern">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid lg:grid-cols-2 gap-16">
+        <div class="reveal">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded border border-cyan-500/20 bg-cyan-500/5 text-[10px] font-mono text-cyan-400 uppercase tracking-widest mb-4">
+            <span class="iconify" data-icon="lucide:radio" data-width="12"></span>
+            Open Channel
+          </div>
+          <h2 class="text-3xl md:text-4xl font-semibold tracking-tight">
+            <span class="text-white">Initialize</span> <span class="text-matrix">contact</span>
+          </h2>
+          <p class="mt-4 text-slate-500 font-light leading-relaxed text-sm">
+            Whether you need a RAG pipeline that eliminates hallucinations, autonomous workflow orchestration, or an AI system built on trust — let's talk.
+          </p>
+
+          <div class="space-y-3 mt-8">
+            <a href="mailto:gilbertnyangwachi@gmail.com" class="glass-card rounded-xl p-4 flex items-center gap-4 group">
+              <div class="w-10 h-10 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center group-hover:bg-cyan-500 transition-all">
+                <span class="iconify text-cyan-400 group-hover:text-black transition-colors" data-icon="lucide:mail" data-width="16"></span>
+              </div>
+              <div>
+                <div class="text-xs font-medium text-white">Email</div>
+                <div class="text-[10px] font-mono text-slate-500">gilbertnyangwachi@gmail.com</div>
+              </div>
+            </a>
+            <a href="https://linkedin.com/in/gilbert-omari-0923a630a" target="_blank" class="glass-card rounded-xl p-4 flex items-center gap-4 group">
+              <div class="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center group-hover:bg-blue-500 transition-all">
+                <span class="iconify text-blue-400 group-hover:text-white transition-colors" data-icon="lucide:linkedin" data-width="16"></span>
+              </div>
+              <div>
+                <div class="text-xs font-medium text-white">LinkedIn</div>
+                <div class="text-[10px] font-mono text-slate-500">gilbert-omari-0923a630a</div>
+              </div>
+            </a>
+            <div class="glass-card rounded-xl p-4 flex items-center gap-4">
+              <div class="w-10 h-10 rounded-lg bg-green-500/10 border border-green-500/20 flex items-center justify-center">
+                <span class="iconify text-green-400" data-icon="lucide:phone" data-width="16"></span>
+              </div>
+              <div>
+                <div class="text-xs font-medium text-white">Phone</div>
+                <div class="text-[10px] font-mono text-slate-500">+254 742 104570</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal">
+          <form id="contact-form" class="glass rounded-2xl p-8 space-y-5">
+            <div>
+              <label class="text-[10px] font-mono text-slate-600 uppercase tracking-wider mb-2 block">Identifier</label>
+              <input type="text" name="name" required class="w-full bg-black/50 border border-cyan-500/10 rounded-lg px-4 py-3 text-xs text-white font-mono placeholder-slate-700 focus:outline-none focus:border-cyan-500/40 focus:shadow-[0_0_15px_rgba(0,255,255,0.05)] transition-all" placeholder="Your name">
+            </div>
+            <div>
+              <label class="text-[10px] font-mono text-slate-600 uppercase tracking-wider mb-2 block">Signal Frequency</label>
+              <input type="email" name="email" required class="w-full bg-black/50 border border-cyan-500/10 rounded-lg px-4 py-3 text-xs text-white font-mono placeholder-slate-700 focus:outline-none focus:border-cyan-500/40 focus:shadow-[0_0_15px_rgba(0,255,255,0.05)] transition-all" placeholder="your@email.com">
+            </div>
+            <div>
+              <label class="text-[10px] font-mono text-slate-600 uppercase tracking-wider mb-2 block">Mission Type</label>
+              <select name="type" class="w-full bg-black/50 border border-cyan-500/10 rounded-lg px-4 py-3 text-xs text-slate-500 font-mono focus:outline-none focus:border-cyan-500/40 transition-all">
+                <option value="" class="bg-black">Select mission type</option>
+                <option value="rag" class="bg-black">RAG Architecture</option>
+                <option value="agents" class="bg-black">Agentic Systems</option>
+                <option value="automation" class="bg-black">Workflow Automation</option>
+                <option value="creative" class="bg-black">Creative & Content</option>
+                <option value="other" class="bg-black">Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-[10px] font-mono text-slate-600 uppercase tracking-wider mb-2 block">Transmission</label>
+              <textarea name="message" rows="4" required class="w-full bg-black/50 border border-cyan-500/10 rounded-lg px-4 py-3 text-xs text-white font-mono placeholder-slate-700 focus:outline-none focus:border-cyan-500/40 focus:shadow-[0_0_15px_rgba(0,255,255,0.05)] transition-all resize-none" placeholder="Describe your mission..."></textarea>
+            </div>
+            <button type="submit" class="w-full px-6 py-3 text-xs font-mono uppercase tracking-wider rounded-lg border border-cyan-500/40 text-cyan-400 hover:bg-cyan-500 hover:text-black hover:border-cyan-400 hover:shadow-[0_0_30px_rgba(0,255,255,0.3)] transition-all flex items-center justify-center gap-2">
+              <span class="iconify" data-icon="lucide:send" data-width="12"></span>
+              Transmit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-cyan-500/5 py-6">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-[10px] font-mono text-slate-700">root@gilbert:~$ echo "© 2025 Gilbert Omari"</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="https://linkedin.com/in/gilbert-omari-0923a630a" target="_blank" class="text-slate-700 hover:text-cyan-400 transition-colors">
+          <span class="iconify" data-icon="lucide:linkedin" data-width="14"></span>
+        </a>
+        <a href="mailto:gilbertnyangwachi@gmail.com" class="text-slate-700 hover:text-cyan-400 transition-colors">
+          <span class="iconify" data-icon="lucide:mail" data-width="14"></span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast" class="toast fixed bottom-6 right-6 z-50 glass rounded-xl p-4 flex items-center gap-3 border border-cyan-500/20">
+    <div class="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+      <span class="iconify text-cyan-400" data-icon="lucide:check" data-width="14"></span>
+    </div>
+    <div>
+      <div class="text-xs font-mono text-cyan-400">Transmission received</div>
+      <div class="text-[10px] text-slate-500">Signal processing — will respond shortly.</div>
+    </div>
+  </div>
+
+  <script>
+    // ===== DIGITAL RAIN =====
+    const canvas = document.getElementById('rain-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF<>{}[]|/\\';
+    const fontSize = 12;
+    let columns = Math.floor(canvas.width / fontSize);
+    let drops = Array(columns).fill(1);
+
+    function drawRain() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.06)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#0ff';
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        ctx.globalAlpha = Math.random() * 0.5 + 0.1;
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    let rainInterval = setInterval(drawRain, 50);
+
+    window.addEventListener('resize', () => {
+      columns = Math.floor(canvas.width / fontSize);
+      drops = Array(columns).fill(1);
+    });
+
+    // ===== NAVBAR SCROLL =====
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.style.background = 'rgba(0,0,0,0.85)';
+        navbar.style.backdropFilter = 'blur(20px)';
+        navbar.style.borderBottom = '1px solid rgba(0,255,255,0.05)';
+        navbar.style.padding = '0.5rem 1.5rem';
+      } else {
+        navbar.style.background = 'transparent';
+        navbar.style.backdropFilter = 'none';
+        navbar.style.borderBottom = 'none';
+        navbar.style.padding = '1rem 1.5rem';
+      }
+    });
+
+    // ===== MOBILE MENU =====
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+    let menuOpen = false;
+    mobileToggle.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('open');
+      menuIcon.setAttribute('data-icon', menuOpen ? 'lucide:x' : 'lucide:menu');
+    });
+    document.querySelectorAll('.mobile-nav-link').forEach(l => l.addEventListener('click', () => {
+      menuOpen = false;
+      mobileMenu.classList.remove('open');
+      menuIcon.setAttribute('data-icon', 'lucide:menu');
+    }));
+
+    // ===== SCROLL REVEAL =====
+    const revealEls = document.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('active'); });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => revealObserver.observe(el));
+
+    // ===== TABS =====
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.classList.add('text-slate-500'); });
+        btn.classList.add('active'); btn.classList.remove('text-slate-500');
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById(`tab-${tab}`).classList.add('active');
+        document.querySelectorAll(`#tab-${tab} .reveal`).forEach(el => {
+          el.classList.remove('active');
+          setTimeout(() => el.classList.add('active'), 50);
+        });
+      });
+    });
+
+    // ===== CONTACT FORM =====
+    document.getElementById('contact-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 4000);
+      e.target.reset();
+    });
+
+    // ===== ACTIVE NAV =====
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => { if (window.scrollY >= s.offsetTop - 120) current = s.id; });
+      navLinks.forEach(l => {
+        l.classList.remove('active');
+        if (l.getAttribute('href') === `#${current}`) l.classList.add('active');
+      });
+    });
+
+    // ===== SMOOTH SCROLL =====
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        const t = document.querySelector(this.getAttribute('href'));
+        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // ===== TYPING EFFECT =====
+    const typingEl = document.querySelector('.typing-text');
+    if (typingEl) {
+      const text = typingEl.textContent;
+      typingEl.style.width = '0';
+      setTimeout(() => { typingEl.style.width = text.length + 'ch'; typingEl.style.animation = `typing 2s steps(${text.length}) forwards, blink-caret 0.8s step-end infinite`; }, 1500);
+    }
+
+    // ===== PARALLAX MORPH BLOBS ON MOUSE MOVE =====
+    document.addEventListener('mousemove', (e) => {
+      const blobs = document.querySelectorAll('.morph-blob');
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      blobs.forEach((blob, i) => {
+        const factor = (i + 1) * 0.5;
+        blob.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
+      });
+    });
+  </script>
+</body>
+</html>
