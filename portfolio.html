@@ -1270,10 +1270,20 @@
     // ===== CONTACT FORM =====
     document.getElementById('contact-form').addEventListener('submit', (e) => {
       e.preventDefault();
+      const form = e.target;
+      const data = new FormData();
+      data.append('entry.1045781291', form.email.value);
+      data.append('entry.1065046570', form.type.value);
+      data.append('entry.1166974658', form.message.value);
+      fetch('https://docs.google.com/forms/d/e/1FAIpQLSeQiWsYbN9UOOpBI2NOXZ2KcjJm2h--JHkmHL9EGhmVtQLR6g/formResponse', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: data
+      });
       const toast = document.getElementById('toast');
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 4000);
-      e.target.reset();
+      form.reset();
     });
 
     // ===== ACTIVE NAV =====
